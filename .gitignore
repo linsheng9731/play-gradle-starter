@@ -13,3 +13,5 @@ project/target
 /play-scala-hello-world-tutorial.ipr
 /play-scala-hello-world-tutorial.iws
 /.vscode
+/sbt-dist/
+/.g8/
