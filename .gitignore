@@ -9,3 +9,7 @@ project/target
 /.settings
 /RUNNING_PID
 /.gradle
+/.mergify.yml
+/play-scala-hello-world-tutorial.ipr
+/play-scala-hello-world-tutorial.iws
+/.vscode
