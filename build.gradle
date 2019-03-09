@@ -1,0 +1,101 @@
+plugins {
+    id 'play'
+    id 'idea'
+    id "com.github.hierynomus.scalariform" version "0.2.0"
+}
+
+    def playVersion = '2.6.17'
+    def scalaVersion = System.getProperty("scala.binary.version", /* default = */ "2.12")
+    def slick = "3.2.3"
+    def slickJodaMapperVersion = "2.3.0"
+    def grpc = "1.14.0"
+    def slickPg = '0.17.2'
+    def playSlick = "3.0.3"
+    def scalaUtils = "1.0.3"
+    def asyncHttpClient = "2.5.2"
+    def postgresql = "42.2.4.jre7"
+    def jacksonModuleScala = "2.9.6"
+    def playSlickEvolutions = "3.0.3"
+    def playZipkinTracingPlay = "2.1.0"
+
+dependencies {
+
+    play group: 'com.typesafe.play',name:"play-guice_$scalaVersion",version: playVersion
+    play group: 'com.typesafe.play',name:"play-logback_$scalaVersion",version: playVersion
+    play group: 'com.typesafe.play',name:"filters-helpers_$scalaVersion",version: playVersion
+
+    play group: 'com.typesafe.play',name:"play-slick_$scalaVersion",version: playSlick
+    play group: 'com.typesafe.play',name:"play-slick-evolutions_$scalaVersion",version: playSlickEvolutions
+    play group: 'com.github.tminglei', name: "slick-pg_$scalaVersion", version: slickPg
+    play group: 'com.github.tototoshi', name: "slick-joda-mapper_$scalaVersion", version: slickJodaMapperVersion
+    play group: 'com.github.tminglei', name: "slick-pg_play-json_$scalaVersion", version: slickPg
+    play group: 'com.typesafe.slick', name: "slick_$scalaVersion", version: slick
+    play group: 'org.postgresql', name: "postgresql", version: postgresql
+
+    play group: 'io.grpc', name: "grpc-stub", version: grpc
+    play group: 'io.grpc', name: "grpc-netty", version: grpc
+    play group: 'io.grpc', name: "grpc-services", version: grpc
+
+    play group: 'jp.co.bizreach', name:"play-zipkin-tracing-play_$scalaVersion", version: playZipkinTracingPlay
+    play group: 'com.typesafe.scala-logging',name:"scala-logging_$scalaVersion",version: '3.9.0'
+    play group: 'com.fasterxml.jackson.module', name: "jackson-module-scala_$scalaVersion", version: jacksonModuleScala
+    play group: 'org.asynchttpclient', name: "async-http-client", version: asyncHttpClient
+    play group: 'org.jmotor', name: "scala-utils_$scalaVersion", version: scalaUtils
+
+    playTest group: 'org.scalatestplus.play', name: "scalatestplus-play_$scalaVersion", version: '3.1.2'
+
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+
+    maven {
+        name "lightbend-maven-releases"
+        url "https://repo.lightbend.com/lightbend/maven-release"
+    }
+    maven {
+        name "ali-maven"
+        url "http://maven.aliyun.com/nexus/content/groups/public/"
+    }
+    ivy {
+        name "lightbend-ivy-release"
+        url "https://repo.lightbend.com/lightbend/ivy-releases"
+        layout "ivy"
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file("app")
+        testSourceDirs += file("test")
+        scopes.COMPILE = [plus: [configurations.play], minus: []]
+        scopes.RUNTIME = [plus: [configurations.playRun], minus:[configurations.play]]
+        scopes.TEST = [plus: [configurations.playTest], minus: [configurations.playRun]]
+    }
+}
+
+model {
+    components {
+        play {
+            platform play: playVersion, scala: scalaVersion, java: '1.8'
+            injectedRoutesGenerator = true
+
+            sources {
+                twirlTemplates {
+                    defaultImports = TwirlImports.SCALA
+                }
+            }
+        }
+    }
+}
+
+scalariform {
+    alignParameters = true
+    alignSingleLineCaseStatements = true
+    newlineAtEndOfFile = true
+    rewriteArrowSymbols = true
+    alignSingleLineCaseStatements = true
+}
+
