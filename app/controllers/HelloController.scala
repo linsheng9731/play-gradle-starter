@@ -2,16 +2,10 @@ package controllers
 
 import akka.actor.ActorSystem
 import akka.grpc.GrpcClientSettings
-import akka.stream.{ActorMaterializer, Materializer}
-
-import scala.concurrent.Future
+import akka.stream.ActorMaterializer
 import javax.inject.{Inject, Singleton}
-import scala.util.{ Failure, Success }
-import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import example.myapp.helloworld.grpc.{GreeterService, GreeterServiceClient, HelloReply, HelloRequest}
-import example.myapp.helloworld.grpc
-import service.grpc.GreeterServiceImpl
+import example.myapp.helloworld.grpc.{GreeterService, GreeterServiceClient, HelloRequest}
 
 /**
   * HelloController
