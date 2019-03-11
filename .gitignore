@@ -1,6 +1,7 @@
 logs
 target
 build
+project
 project/target
 /.idea
 /.idea_modules
