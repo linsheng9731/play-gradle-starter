@@ -1,8 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        // see https://plugins.gradle.org/plugin/com.lightbend.akka.grpc.gradle
+        // for the currently latest version.
+        //classpath 'gradle.plugin.com.lightbend.akka.grpc:akka-grpc-gradle-plugin:0.1'
+
+        // For testing on travis, we use another group id:
+        classpath 'gradle.plugin.com.lightbend.akka.grpc:akka-grpc-gradle-plugin:0.6.0'
+
+    }
+}
+
 plugins {
+    id 'scala'
     id 'play'
     id 'idea'
     id "com.github.hierynomus.scalariform" version "0.2.0"
+//    id "com.lightbend.akka.grpc.gradle" version "SNAPSHOT"
 }
+
+apply plugin: 'com.lightbend.akka.grpc.gradle'
 
     def playVersion = '2.6.17'
     def scalaVersion = System.getProperty("scala.binary.version", /* default = */ "2.12")
@@ -36,6 +57,8 @@ dependencies {
     play group: 'io.grpc', name: "grpc-netty", version: grpc
     play group: 'io.grpc', name: "grpc-services", version: grpc
 
+    play group: 'com.lightbend.akka.grpc', name: "akka-grpc-runtime_$scalaVersion", version: '0.6.0'
+
     play group: 'jp.co.bizreach', name:"play-zipkin-tracing-play_$scalaVersion", version: playZipkinTracingPlay
     play group: 'com.typesafe.scala-logging',name:"scala-logging_$scalaVersion",version: '3.9.0'
     play group: 'com.fasterxml.jackson.module', name: "jackson-module-scala_$scalaVersion", version: jacksonModuleScala
@@ -44,6 +67,11 @@ dependencies {
 
     playTest group: 'org.scalatestplus.play', name: "scalatestplus-play_$scalaVersion", version: '3.1.2'
 
+}
+akkaGrpc {
+    language = "Scala"
+    generateClient = true
+    generateServer = true
 }
 
 repositories {
@@ -69,12 +97,20 @@ repositories {
 idea {
     module {
         sourceDirs += file("app")
+        sourceDirs += file("${buildDir}/generated/source/proto/main/")
         testSourceDirs += file("test")
         scopes.COMPILE = [plus: [configurations.play], minus: []]
         scopes.RUNTIME = [plus: [configurations.playRun], minus:[configurations.play]]
         scopes.TEST = [plus: [configurations.playTest], minus: [configurations.playRun]]
     }
 }
+
+sourceSets {
+    generated{
+        java.srcDir "${buildDir}/generated/source/proto/main/"
+    }
+}
+
 
 model {
     components {
@@ -85,6 +121,9 @@ model {
             sources {
                 twirlTemplates {
                     defaultImports = TwirlImports.SCALA
+                }
+                extraJava(JavaSourceSet) {
+                    source.srcDir "${buildDir}/generated/source/proto/main/"
                 }
             }
         }
